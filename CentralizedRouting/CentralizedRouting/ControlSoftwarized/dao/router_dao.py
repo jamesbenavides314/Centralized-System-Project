@@ -44,6 +44,19 @@ class RouterDAO:
             cursor.close()
             connection.close()
 
+    def delete_router(self, router_id: str):
+        """Elimina un router y sus datos asociados de MySQL. FR-01"""
+        connection = self.database.get_connection()
+        try:
+            cursor = connection.cursor()
+            cursor.execute("DELETE FROM routing_tables WHERE router_id = %s;", (router_id,))
+            cursor.execute("DELETE FROM topology WHERE source_router = %s OR target_router = %s;", (router_id, router_id))
+            cursor.execute("DELETE FROM routers WHERE router_id = %s;", (router_id,))
+            connection.commit()
+        finally:
+            cursor.close()
+            connection.close()
+
     def get_router_by_id(self, router_id: str):
         query = """
         SELECT router_id, ip, port, status

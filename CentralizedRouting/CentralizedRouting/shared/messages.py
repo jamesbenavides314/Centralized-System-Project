@@ -8,6 +8,7 @@ import json
 # TIPOS DE MENSAJES
 # ──────────────────────────────────────────────
 TYPE_REGISTER       = "REGISTER_ROUTER"
+TYPE_DEREGISTER     = "DEREGISTER_ROUTER"
 TYPE_TOPOLOGY       = "TOPOLOGY_UPDATE"
 TYPE_ROUTING_TABLE  = "ROUTING_TABLE"
 TYPE_LINK_UPDATE    = "LINK_UPDATE"
@@ -27,6 +28,14 @@ def build_register(router_id: str, ip: str, port: int, status: str = "ACTIVE") -
         "ip": ip,
         "port": port,
         "status": status
+    }
+
+
+def build_deregister(router_id: str) -> dict:
+    """FR-01: Mensaje de desregistro del router."""
+    return {
+        "type": TYPE_DEREGISTER,
+        "router_id": router_id
     }
 
 

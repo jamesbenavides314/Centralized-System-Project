@@ -1,0 +1,22 @@
+{
+  "router": {
+    "router_id": "R2",
+    "ip": "127.0.0.1",
+    "port": 5002,
+    "status": "ACTIVE",
+    "neighbors": [
+      {
+        "neighbor_id": "R1",
+        "cost": 2
+      },
+      {
+        "neighbor_id": "R4",
+        "cost": 4
+      }
+    ]
+  },
+  "controller": {
+    "host": "127.0.0.1",
+    "port": 9000
+  }
+}

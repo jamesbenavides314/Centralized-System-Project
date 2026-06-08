@@ -10,3 +10,33 @@
 2026-06-01 22:36:09 [INFO] [TOPOLOGY] router=R1 | vecinos=[{'neighbor_id': 'R2', 'cost': 1}, {'neighbor_id': 'R3', 'cost': 4}]
 2026-06-01 22:50:48 [INFO] [REGISTER] router=R4 | ip=127.0.0.1 port=5004
 2026-06-01 22:50:48 [INFO] [TOPOLOGY] router=R4 | vecinos=[{'neighbor_id': 'R2', 'cost': 5}, {'neighbor_id': 'R3', 'cost': 1}]
+2026-06-07 17:35:23 [INFO] [REGISTER] router=R1 | ip=127.0.0.1 port=5001
+2026-06-07 17:35:23 [INFO] [TOPOLOGY] router=R1 | vecinos=[{'neighbor_id': 'R2', 'cost': 2}, {'neighbor_id': 'R3', 'cost': 3}]
+2026-06-07 18:56:02 [INFO] [REGISTER] router=R4 | ip=127.0.0.1 port=5004
+2026-06-07 18:56:02 [INFO] [TOPOLOGY] router=R4 | vecinos=[{'neighbor_id': 'R2', 'cost': 4}]
+2026-06-07 18:56:02 [INFO] [ROUTE_COMPUTATION] router=ALL | Iniciando cálculo de tablas de ruteo
+2026-06-07 18:56:02 [INFO] [ROUTE_COMPUTED] router=R1 | entradas=2
+2026-06-07 18:56:02 [INFO] [ROUTE_COMPUTED] router=R4 | entradas=1
+2026-06-07 18:56:02 [INFO] [TABLE_SENT] router=R1 | entradas=2
+2026-06-07 18:56:02 [INFO] [TABLE_SENT] router=R4 | entradas=1
+2026-06-07 18:56:13 [INFO] [REGISTER] router=R3 | ip=127.0.0.1 port=5003
+2026-06-07 18:56:13 [INFO] [TOPOLOGY] router=R3 | vecinos=[{'neighbor_id': 'R1', 'cost': 3}]
+2026-06-07 18:56:13 [INFO] [ROUTE_COMPUTATION] router=ALL | Iniciando cálculo de tablas de ruteo
+2026-06-07 18:56:13 [INFO] [ROUTE_COMPUTED] router=R1 | entradas=2
+2026-06-07 18:56:13 [INFO] [ROUTE_COMPUTED] router=R4 | entradas=1
+2026-06-07 18:56:13 [INFO] [ROUTE_COMPUTED] router=R3 | entradas=2
+2026-06-07 18:56:13 [INFO] [TABLE_SENT] router=R1 | entradas=2
+2026-06-07 18:56:13 [INFO] [TABLE_SENT] router=R4 | entradas=1
+2026-06-07 18:56:13 [INFO] [TABLE_SENT] router=R3 | entradas=2
+2026-06-07 18:56:22 [INFO] [REGISTER] router=R2 | ip=127.0.0.1 port=5002
+2026-06-07 18:56:22 [INFO] [TOPOLOGY] router=R2 | vecinos=[{'neighbor_id': 'R1', 'cost': 2}, {'neighbor_id': 'R4', 'cost': 4}]
+2026-06-07 18:56:22 [INFO] [ROUTE_COMPUTATION] router=ALL | Iniciando cálculo de tablas de ruteo
+2026-06-07 18:56:22 [INFO] [ROUTE_COMPUTED] router=R1 | entradas=3
+2026-06-07 18:56:22 [INFO] [ROUTE_COMPUTED] router=R4 | entradas=3
+2026-06-07 18:56:22 [INFO] [ROUTE_COMPUTED] router=R3 | entradas=3
+2026-06-07 18:56:22 [INFO] [ROUTE_COMPUTED] router=R2 | entradas=3
+2026-06-07 18:56:22 [INFO] [TABLE_SENT] router=R1 | entradas=3
+2026-06-07 18:56:22 [INFO] [TABLE_SENT] router=R4 | entradas=3
+2026-06-07 18:56:22 [INFO] [TABLE_SENT] router=R3 | entradas=3
+2026-06-07 18:56:22 [INFO] [TABLE_SENT] router=R2 | entradas=3
+2026-06-07 18:58:33 [INFO] [DEREGISTER] router=R4 | Router eliminado

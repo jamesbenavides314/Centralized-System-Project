@@ -22,8 +22,8 @@ class RouterAppController:
     Coordina el model, view, service, DAO y capa de red.
     """
 
-    def __init__(self):
-        self.config_dao = RouterConfigDAO()
+    def __init__(self, config_path: str = "config/router_config.json"):
+        self.config_dao = RouterConfigDAO(config_path=config_path)
         self.view = RouterCLIView()
         self.router = None
         self.client = None
@@ -166,6 +166,13 @@ class RouterAppController:
     # ──────────────────────────────────────────
     # FR-08 — SIMULACIÓN DE CAMBIO DE ENLACE
     # ──────────────────────────────────────────
+
+    def send_deregister(self):
+        """Envía DEREGISTER_ROUTER al controller para que elimine el router de MySQL."""
+        from shared.messages import build_deregister
+        if self.router and self.client:
+            msg = build_deregister(self.router.router_id)
+            self.client.send_message(msg)
 
     def simulate_link_update(self, neighbor_id: str, new_cost: int):
         """

@@ -21,7 +21,7 @@ from service.registration_service import (
 from network.tcp_server import TCPServer
 from view.controller_view import ControllerCLIView
 from shared.messages import (
-    TYPE_REGISTER, TYPE_TOPOLOGY, TYPE_LINK_UPDATE,
+    TYPE_REGISTER, TYPE_DEREGISTER, TYPE_TOPOLOGY, TYPE_LINK_UPDATE,
     build_error
 )
 
@@ -70,6 +70,9 @@ class ControllerAppController:
         if msg_type == TYPE_REGISTER:
             return self._handle_register(message, conn)
 
+        elif msg_type == TYPE_DEREGISTER:
+            return self._handle_deregister(message)
+
         elif msg_type == TYPE_TOPOLOGY:
             return self._handle_topology(message)
 
@@ -83,6 +86,33 @@ class ControllerAppController:
             )
             self.view.show_response_sent(response)
             return response
+
+    # ──────────────────────────────────────────
+    # FR-01 — DESREGISTRO
+    # ──────────────────────────────────────────
+
+    def _handle_deregister(self, message: dict) -> dict:
+        from shared.messages import build_ack
+        router_id = message.get("router_id")
+        if not router_id:
+            return build_error("unknown", "router_id faltante en DEREGISTER_ROUTER")
+
+        with self._lock:
+            self._connections.pop(router_id, None)
+            self._registered_ids.discard(router_id)
+            # Limpiar topología en memoria
+            self.topology.adjacency.pop(router_id, None)
+            for neighbors in self.topology.adjacency.values():
+                neighbors.pop(router_id, None)
+
+        # Eliminar de MySQL
+        self.router_dao.delete_router(router_id)
+        log("DEREGISTER", router_id, "Router eliminado", self.router_dao)
+
+        routers = self.router_dao.get_all_routers()
+        self.view.show_registered_routers(routers)
+
+        return build_ack(router_id, f"Router {router_id} eliminado correctamente")
 
     # ──────────────────────────────────────────
     # FR-01 — REGISTRO

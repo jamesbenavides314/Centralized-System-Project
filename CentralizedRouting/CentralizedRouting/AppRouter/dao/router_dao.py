@@ -27,11 +27,21 @@ class RouterConfigDAO:
 
     # ── JSON config ──
 
+    def _ensure_config_exists(self):
+        """Crea el archivo de config con estructura vacía si no existe."""
+        if not self.config_path.exists():
+            self.config_path.parent.mkdir(parents=True, exist_ok=True)
+            default = {"router": {}, "controller": {"host": "127.0.0.1", "port": 9000}}
+            with open(self.config_path, "w", encoding="utf-8") as f:
+                json.dump(default, f, indent=2)
+
     def load_config(self) -> dict:
+        self._ensure_config_exists()
         with open(self.config_path, "r", encoding="utf-8") as file:
             return json.load(file)
 
     def save_config(self, config: dict):
+        self.config_path.parent.mkdir(parents=True, exist_ok=True)
         with open(self.config_path, "w", encoding="utf-8") as file:
             json.dump(config, file, indent=2)
 
@@ -43,6 +53,21 @@ class RouterConfigDAO:
             return False
 
     # ── MySQL queries ──
+
+    def delete_router_from_db(self, router_id: str):
+        """Elimina el router directamente de MySQL (usado cuando no hay conexión activa)."""
+        try:
+            conn = self._get_connection()
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM routing_tables WHERE router_id = %s;", (router_id,))
+            cursor.execute("DELETE FROM topology WHERE source_router = %s OR target_router = %s;", (router_id, router_id))
+            cursor.execute("DELETE FROM routers WHERE router_id = %s;", (router_id,))
+            conn.commit()
+        except Exception as e:
+            print(f"  [!] Error eliminando router de la BD: {e}")
+        finally:
+            cursor.close()
+            conn.close()
 
     def get_all_routers(self) -> list:
         from model.router import Router

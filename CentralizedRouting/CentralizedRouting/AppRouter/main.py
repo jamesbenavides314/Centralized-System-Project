@@ -230,21 +230,30 @@ def cmd_show_routing_table(dao: RouterConfigDAO):
 
 def cmd_delete(dao: RouterConfigDAO, app: RouterAppController):
     print("\n[ /delete_router ]")
-    if app.is_connected():
-        print("  [!] Hay una conexión activa. Desconéctate primero con /disconnect.")
-        return
     if not dao.router_exists():
         print("  [!] No hay router configurado.")
         return
     r = dao.load_config()["router"]
-    print(f"  Router a eliminar del config: {r['router_id']}")
-    if input("  ¿Confirmar? (s/n): ").strip().lower() == "s":
-        config = dao.load_config()
-        config["router"] = {}
-        dao.save_config(config)
-        print(f"  ✓ Router {r['router_id']} eliminado del config.")
-    else:
+    print(f"  Router a eliminar: {r['router_id']}")
+    if input("  ¿Confirmar? (s/n): ").strip().lower() != "s":
         print("  Cancelado.")
+        return
+
+    # Si hay conexión activa, notificar al controller para que elimine de MySQL
+    if app.is_connected():
+        app.send_deregister()
+        import time
+        time.sleep(0.5)  # Esperar ACK del controller
+        app.disconnect()
+    else:
+        # Sin conexión: eliminar directamente de MySQL desde el router
+        dao.delete_router_from_db(r["router_id"])
+
+    # Limpiar config local
+    config = dao.load_config()
+    config["router"] = {}
+    dao.save_config(config)
+    print(f"  ✓ Router {r['router_id']} eliminado del config y de la base de datos.")
 
 
 def cmd_connect(dao: RouterConfigDAO, app: RouterAppController):
@@ -322,8 +331,20 @@ def cmd_help():
 # ──────────────────────────────────────────────
 
 def main():
-    dao = RouterConfigDAO()
-    app = RouterAppController()
+    import sys
+    if len(sys.argv) < 2:
+        print("\n  [!] Debes indicar el ID del router al correr el programa.")
+        print("  Ejemplo: python main.py R1\n")
+        sys.exit(1)
+
+    router_id_arg = sys.argv[1].strip().upper()
+    if not validate_router_id(router_id_arg):
+        print(f"\n  [!] ID invalido: '{router_id_arg}'. Formato esperado: R1, R2, R3...\n")
+        sys.exit(1)
+
+    config_path = f"config/router_{router_id_arg}_config.json"
+    dao = RouterConfigDAO(config_path=config_path)
+    app = RouterAppController(config_path=config_path)
 
     print("\n" + "=" * 48)
     print("         AppRouter — CLI")
